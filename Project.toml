@@ -1,0 +1,11 @@
+name = "FinEtoolsTetsFromTris"
+uuid = "7dbda32b-b8f8-4b95-b50c-a09c52aba2c8"
+authors = ["Petr Krysl <pkrysl@ucsd.edu>"]
+version = "0.1.0"
+
+[deps]
+FinEtools = "91bb5406-6c9a-523d-811d-0644c4229550"
+REPLHistory = "a5566ce3-012c-4b09-85b8-62131f0c3f36"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+TetGen = "c5d3f3f7-f850-59f6-8a2e-ffc6dc1317ea"
