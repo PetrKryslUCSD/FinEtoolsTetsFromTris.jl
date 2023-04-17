@@ -13,10 +13,10 @@ function mesh(fens, bfes)
     input=TetGen.RawTetGenIO{Cdouble}()
     input.pointlist=fens.xyz'
     TetGen.facetlist!(input, connasarray(bfes)')
-    output =  tetrahedralize(input, "pQa")
+    output =  tetrahedralize(input, "pQaq1.1")
     nfens = deepcopy(fens)
     nfens.xyz = output.pointlist'
-    fes = FESetT4(Matrix(FInt.(output.tetrahedronlist')))
+    fes = FESetT4(output.tetrahedronlist')
     return nfens, fes
 end
 
