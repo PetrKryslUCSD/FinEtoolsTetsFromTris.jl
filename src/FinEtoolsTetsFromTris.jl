@@ -32,9 +32,8 @@ function mesh(fens, bfes; tetgen_args = "")
     maxvol = 1.5 * esmax^3 / 6
     tetgen_args == "" && (tetgen_args = "pQq1.4a$(maxvol)")
     output =  tetrahedralize(input, tetgen_args)
-    nfens = deepcopy(fens)
-    nfens.xyz = output.pointlist'
-    fes = FESetT4(output.tetrahedronlist')
+    nfens = FENodeSet(Float64.(output.pointlist'))
+    fes = FESetT4(Int.(output.tetrahedronlist'))
     return nfens, fes
 end
 
