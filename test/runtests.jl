@@ -52,6 +52,7 @@ function test()
     fens, new_numbering = compactnodes(fens, connected);
     bfes = renumberconn!(bfes, new_numbering);
     fens, fes = FinEtoolsTetsFromTris.mesh(fens, bfes)
+    @test count(fes) == 64269
     VTKWrite.vtkwrite("m002.vtu", fens, fes)
     true
 end
@@ -116,6 +117,7 @@ function test()
     esmin, esmax, esmean = meshstatistics(fens, bfes)
     maxvol = 1.5 * esmax^3 / 6 * 10
     fens, fes = FinEtoolsTetsFromTris.mesh(fens, bfes; tetgen_args = "pQq1.4a$(maxvol)")
+    @test count(fes) == 42928
     VTKWrite.vtkwrite("m003.vtu", fens, fes)
     true
 end
