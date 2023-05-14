@@ -24,9 +24,28 @@ function _edgestatistics(fens, fes)
     return esmin, esmax, esmean / nedges
 end
 
+"""
+    mesh(fens, bfes; tetgen_args = "")
+
+Generate tetrahedra to fill volume bounded by triangles.
+
+# Arguments
+
+- `fens`, `bfes`:  finite element node set and a set of the triangles. A check
+  is run to see whether the triangles form a closed shape (i.e. the boundary is
+  null).
+- `tetgen_args`: optional arguments to be passed to `tetrahedralize()`. The
+  default arguments controlled the element size by setting the maximum volume.
+
+# Returns
+
+- `nfens`, `fes`: finite element node set and a set of the tetrahedra.
+"""
 function mesh(fens, bfes; tetgen_args = "")
     input=TetGen.RawTetGenIO{Cdouble}()
     input.pointlist=fens.xyz'
+    bbfes = meshboundary(bfes)
+    count(bbfes) == 0 || error("The triangular mesh does not appear to be closed")
     TetGen.facetlist!(input, connasarray(bfes)')
     esmin, esmax, esmean = _edgestatistics(fens, bfes)
     maxvol = 1.5 * esmax^3 / 6
