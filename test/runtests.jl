@@ -1,3 +1,47 @@
+module m00x01
+using Test
+using FinEtools
+using FinEtools.MeshExportModule.VTKWrite
+using FinEtools.MeshExportModule.NASTRAN
+using FinEtools.MeshImportModule
+using FinEtoolsTetsFromTris
+using DelimitedFiles
+
+function test()
+    xyz = readdlm("uxoxyz.txt", ',')
+    fens = FENodeSet(xyz)
+    conn = readdlm("uxoconn.txt", ',')
+    bfes = FESetT3(Int.(conn))
+    fens, fes = FinEtoolsTetsFromTris.mesh(fens, bfes)
+
+    VTKWrite.vtkwrite("m00x01.vtu", fens, fes)
+
+    e = NASTRANExporter("uxo.nas")
+    BEGIN_BULK(e)
+    for j in eachindex(fens)
+        GRID(e, j, fens.xyz[j, :])
+    end
+    PSOLID(e, 1, 1)
+    conn = connasarray(fes)
+    for j in eachindex(fes)
+        CTETRA(e, j, 1, conn[j, :])
+    end
+    ENDDATA(e)
+    CEND(e)
+    close(e)
+
+    output = MeshImportModule.import_NASTRAN(
+        "uxo.nas"
+    )
+    @test count(output["fens"]) == count(fens)
+    @test count(output["fesets"][1]) == count(fes)
+    true
+end
+
+test()
+nothing
+end
+
 module m001
 using Test
 using FinEtools
@@ -148,3 +192,5 @@ end
 test()
 nothing
 end
+
+
