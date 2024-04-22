@@ -1,7 +1,7 @@
 name = "FinEtoolsTetsFromTris"
 uuid = "7dbda32b-b8f8-4b95-b50c-a09c52aba2c8"
 authors = ["Petr Krysl <pkrysl@ucsd.edu>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 FinEtools = "91bb5406-6c9a-523d-811d-0644c4229550"
@@ -10,6 +10,6 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TetGen = "c5d3f3f7-f850-59f6-8a2e-ffc6dc1317ea"
 
 [compat]
-FinEtools = "^7.3"
+FinEtools = "^8"
 TetGen = "^1.5"
-julia = "^1.9"
+julia = "^1.10"
