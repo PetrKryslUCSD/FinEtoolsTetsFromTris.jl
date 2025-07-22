@@ -4,7 +4,13 @@ using FinEtools
 using TetGen
 using LinearAlgebra
 
-function _edgestatistics(fens, fes)
+
+"""
+    edgestatistics(fens, fes)
+
+Calculate statistics of the edges of the surface mesh.
+"""
+function edgestatistics(fens, fes)
     ncnodes = nodesperelem(fes)
     esmin = Inf
     esmax = 0.0
@@ -31,25 +37,33 @@ Generate tetrahedra to fill volume bounded by triangles.
 
 # Arguments
 
-- `fens`, `bfes`:  finite element node set and a set of the triangles. A check
-  is run to see whether the triangles form a closed shape (i.e. the boundary is
-  null).
+- `fens`, `bfes`:  finite element node set and a set of the boundary triangles.
+  A check is run to see whether the triangles form a closed shape (i.e. the
+  boundary of the boundary is null).
 - `tetgen_args`: optional arguments to be passed to `tetrahedralize()`. The
-  default arguments controlled the element size by setting the maximum volume.
+  default argument makes the tetrahedron generation quiet (`"Q"`).
 
 # Returns
 
 - `nfens`, `fes`: finite element node set and a set of the tetrahedra.
+
+# Notes
+
+Constraints can be added to tetrahedralization by passing additional
+arguments to `tetrahedralize()`. For example, to limit the maximum volume of 
+the tetrahedra, you can use the following code:   
+```
+    esmin, esmax, esmean = edgestatistics(fens, bfes)
+    maxvol = 1.5 * esmax^3 / 6
+    nfens, fes = mesh(fens, bfes; tetgen_args = "Qa\$(maxvol)")
+```
 """
-function mesh(fens, bfes; tetgen_args = "")
+function mesh(fens, bfes; tetgen_args = "pQq1.4")
     input=TetGen.RawTetGenIO{Cdouble}()
     input.pointlist=fens.xyz'
     bbfes = meshboundary(bfes)
     count(bbfes) == 0 || error("The triangular mesh does not appear to be closed")
     TetGen.facetlist!(input, connasarray(bfes)')
-    esmin, esmax, esmean = _edgestatistics(fens, bfes)
-    maxvol = 1.5 * esmax^3 / 6
-    tetgen_args == "" && (tetgen_args = "pQq1.4a$(maxvol)")
     output =  tetrahedralize(input, tetgen_args)
     nfens = FENodeSet(Float64.(output.pointlist'))
     fes = FESetT4(Int.(output.tetrahedronlist'))
